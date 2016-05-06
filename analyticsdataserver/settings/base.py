@@ -210,7 +210,7 @@ THIRD_PARTY_APPS = (
 
 LOCAL_APPS = (
     'analytics_data_api',
-    'analytics_data_api.v0',
+    'analytics_data_api.v0.apps.ApiAppConfig',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

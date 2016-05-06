@@ -1,8 +1,9 @@
-from django.apps import AppConfig
-from django.conf import settings
+from importlib import import_module
+
 from elasticsearch_dsl import connections
 
-from analytics_data_api.utils import load_fully_qualified_definition
+from django.apps import AppConfig
+from django.conf import settings
 
 
 class ApiAppConfig(AppConfig):
@@ -26,3 +27,10 @@ class ApiAppConfig(AppConfig):
             connection_params = {key: val for key, val in connection_params.items() if val is not None}
 
             connections.connections.create_connection(**connection_params)
+
+
+def load_fully_qualified_definition(definition):
+    """ Returns the class given the full definition. """
+    module_name, class_name = definition.rsplit('.', 1)
+    module = import_module(module_name)
+    return getattr(module, class_name)

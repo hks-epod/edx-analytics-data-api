@@ -25,8 +25,8 @@ class BaseCourseView(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         self.course_id = self.kwargs.get('course_id')
-        start_date = request.QUERY_PARAMS.get('start_date')
-        end_date = request.QUERY_PARAMS.get('end_date')
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
         timezone = utc
 
         if start_date:
@@ -231,9 +231,9 @@ class CourseActivityMostRecentWeekView(generics.RetrieveAPIView):
         """ Retrieve the activity type from the query string. """
 
         # Support the old label param
-        activity_type = self.request.QUERY_PARAMS.get('label', None)
+        activity_type = self.request.query_params.get('label', None)
 
-        activity_type = activity_type or self.request.QUERY_PARAMS.get('activity_type', self.DEFAULT_ACTIVITY_TYPE)
+        activity_type = activity_type or self.request.query_params.get('activity_type', self.DEFAULT_ACTIVITY_TYPE)
         activity_type = self._format_activity_type(activity_type)
 
         return activity_type

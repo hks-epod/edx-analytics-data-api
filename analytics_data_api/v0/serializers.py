@@ -23,7 +23,7 @@ class CourseActivityByWeekSerializer(serializers.ModelSerializer):
     particular record is likely to change unexpectedly so we avoid exposing it.
     """
 
-    activity_type = serializers.SerializerMethodField('get_activity_type')
+    activity_type = serializers.SerializerMethodField()
 
     def get_activity_type(self, obj):
         """
@@ -202,12 +202,12 @@ class CourseEnrollmentModeDailySerializer(BaseCourseEnrollmentModelSerializer):
 
         # Create a field for each enrollment mode
         for mode in ENROLLMENT_MODES:
-            fields[mode] = serializers.IntegerField(required=True, default=0)
+            fields[mode] = serializers.IntegerField(default=0)
 
             # Create a transform method for each field
             setattr(self, 'transform_%s' % mode, self._transform_mode)
 
-        fields['cumulative_count'] = serializers.IntegerField(required=True, default=0)
+        fields['cumulative_count'] = serializers.IntegerField(default=0)
 
         return fields
 
@@ -250,7 +250,7 @@ class CourseEnrollmentByGenderSerializer(BaseCourseEnrollmentModelSerializer):
 
         # Create a field for each gender
         for gender in genders.ALL:
-            fields[gender] = serializers.IntegerField(required=True, default=0)
+            fields[gender] = serializers.IntegerField(default=0)
 
             # Create a transform method for each field
             setattr(self, 'transform_%s' % gender, self._transform_gender)
@@ -318,19 +318,20 @@ class VideoTimelineSerializer(ModelSerializerWithCreatedField):
 
 
 class LastUpdatedSerializer(serializers.Serializer):
+    # ??
     last_updated = serializers.DateField(source='date', format=settings.DATE_FORMAT)
 
 
 class LearnerSerializer(serializers.Serializer, DefaultIfNoneMixin):
-    username = serializers.CharField(source='username')
-    enrollment_mode = serializers.CharField(source='enrollment_mode')
-    name = serializers.CharField(source='name')
-    account_url = serializers.SerializerMethodField('get_account_url')
-    email = serializers.CharField(source='email')
-    segments = serializers.Field(source='segments')
-    engagements = serializers.SerializerMethodField('get_engagements')
-    enrollment_date = serializers.DateField(source='enrollment_date', format=settings.DATE_FORMAT)
-    cohort = serializers.CharField(source='cohort')
+    username = serializers.CharField()
+    enrollment_mode = serializers.CharField()
+    name = serializers.CharField()
+    account_url = serializers.SerializerMethodField()
+    email = serializers.CharField()
+    segments = serializers.Field()
+    engagements = serializers.SerializerMethodField()
+    enrollment_date = serializers.DateField(format=settings.DATE_FORMAT)
+    cohort = serializers.CharField()
 
     def transform_segments(self, _obj, value):
         # returns null instead of empty strings
@@ -364,7 +365,7 @@ class LearnerSerializer(serializers.Serializer, DefaultIfNoneMixin):
         return engagements
 
 
-class EdxPaginationSerializer(pagination.PaginationSerializer):
+class EdxPaginationSerializer(pagination.BasePagination):
     """
     Adds values to the response according to edX REST API Conventions.
     """
@@ -386,11 +387,11 @@ class ElasticsearchDSLSearchSerializer(EdxPaginationSerializer):
 
 
 class EngagementDaySerializer(DefaultIfNoneMixin, serializers.Serializer):
-    date = serializers.DateField(format=settings.DATE_FORMAT)
-    problems_attempted = serializers.IntegerField(required=True, default=0)
-    problems_completed = serializers.IntegerField(required=True, default=0)
-    discussion_contributions = serializers.IntegerField(required=True, default=0)
-    videos_viewed = serializers.IntegerField(required=True, default=0)
+    date = serializers.DateTimeField(format=settings.DATE_FORMAT)
+    problems_attempted = serializers.IntegerField(default=0)
+    problems_completed = serializers.IntegerField(default=0)
+    discussion_contributions = serializers.IntegerField(default=0)
+    videos_viewed = serializers.IntegerField(default=0)
 
     def transform_problems_attempted(self, _obj, value):
         return self.default_if_none(value, 0)
@@ -415,9 +416,9 @@ class EnagementRangeMetricSerializer(serializers.Serializer):
     Serializes ModuleEngagementMetricRanges (low_range and high_range) into
     the below_average, average, above_average ranges represented as arrays.
     """
-    below_average = serializers.SerializerMethodField('get_below_average_range')
-    average = serializers.SerializerMethodField('get_average_range')
-    above_average = serializers.SerializerMethodField('get_above_average_range')
+    below_average = serializers.SerializerMethodField()
+    average = serializers.SerializerMethodField()
+    above_average = serializers.SerializerMethodField()
 
     def get_average_range(self, obj):
         metric_range = [
@@ -440,7 +441,7 @@ class CourseLearnerMetadataSerializer(serializers.Serializer):
     enrollment_modes = serializers.Field(source='es_data.enrollment_modes')
     segments = serializers.Field(source='es_data.segments')
     cohorts = serializers.Field(source='es_data.cohorts')
-    engagement_ranges = serializers.SerializerMethodField('get_engagement_ranges')
+    engagement_ranges = serializers.SerializerMethodField()
 
     def get_engagement_ranges(self, obj):
         query_set = obj['engagement_ranges']

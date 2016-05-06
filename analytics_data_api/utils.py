@@ -1,5 +1,4 @@
 import datetime
-from importlib import import_module
 
 from django.db.models import Q
 from rest_framework.authtoken.models import Token
@@ -54,13 +53,6 @@ def dictfetchall(cursor):
         dict(zip([col[0] for col in desc], row))
         for row in cursor.fetchall()
     ]
-
-
-def load_fully_qualified_definition(definition):
-    """ Returns the class given the full definition. """
-    module_name, class_name = definition.rsplit('.', 1)
-    module = import_module(module_name)
-    return getattr(module, class_name)
 
 
 def date_range(start_date, end_date, delta=datetime.timedelta(days=1)):
