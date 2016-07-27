@@ -293,7 +293,7 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
-        'rest_framework_csv.renderers.CSVRenderer',
+        'analytics_data_api.renderers.PaginatedCsvRenderer',
     )
 }
 ########## END REST FRAMEWORK CONFIGURATION
@@ -308,6 +308,10 @@ ENABLE_ADMIN_SITE = False
 
 # base url to generate link to user api
 LMS_USER_ACCOUNT_BASE_URL = None
+
+# Warning: using 0 or None for these can alter the structure of the REST response.
+DEFAULT_PAGE_SIZE = 25
+MAX_PAGE_SIZE = 100
 
 ########## END ANALYTICS DATA API CONFIGURATION
 
