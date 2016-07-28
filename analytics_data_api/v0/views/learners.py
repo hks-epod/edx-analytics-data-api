@@ -63,6 +63,16 @@ class LearnerView(LastUpdateMixin, CourseViewMixin, generics.RetrieveAPIView):
               example, "audit" or "verified").
             * name: The learner's full name.
             * email: The learner's email address.
+            * user_id: The learner's numeric user ID.
+            * language: The learner's preferred language.
+            * location: The learner's reported location.
+            * year_of_birth: The learner's reported year of birth.
+            * level_of_education: The learner's reported level of education.
+            * gender: The learner's reported gender.
+            * mailing_address: The learner's reported mailing address.
+            * city: The learner's reported city.
+            * country: The learner's reported country.
+            * goals: The learner's reported goals.
             * segments: Classification, based on engagement, of this learner's
               work in this course (for example, "highly_engaged" or
               "struggling").
@@ -134,6 +144,16 @@ class LearnerListView(LastUpdateMixin, CourseViewMixin, PaginatedHeadersMixin, C
               example, "audit" or "verified").
             * name: The learner's full name.
             * email: The learner's email address.
+            * user_id: The learner's numeric user ID.
+            * language: The learner's preferred language.
+            * location: The learner's reported location.
+            * year_of_birth: The learner's reported year of birth.
+            * level_of_education: The learner's reported level of education.
+            * gender: The learner's reported gender.
+            * mailing_address: The learner's reported mailing address.
+            * city: The learner's reported city.
+            * country: The learner's reported country.
+            * goals: The learner's reported goals.
             * segments: list of classifications, based on engagement, of each
               learner's work in this course (for example, ["highly_engaged"] or
               ["struggling"]).
@@ -175,7 +195,7 @@ class LearnerListView(LastUpdateMixin, CourseViewMixin, PaginatedHeadersMixin, C
             results will be in CSV format.  Field names will be on the first
             line as column headings, with one learner per row, e.g.:
 
-                username,name,email,segments.0,engagements.videos_viewed,...
+                username,name,email,segments,engagements.videos_viewed,...
                 user1,name1,user1@example.com,"highly engaged",0,...
                 user2,name2,user2@example.com,struggling,1,...
 
@@ -183,7 +203,8 @@ class LearnerListView(LastUpdateMixin, CourseViewMixin, PaginatedHeadersMixin, C
             and the order they appear in.
 
             Fields containing "list" values, like 'segments', are flattened and
-            returned in order, e.g., segments.0,segments.1,segments.2,...
+            returned in order, e.g., multiple segments values would be represented 
+            as "struggling, highly engaged"
 
             Fields containing "dict" values, like 'engagements', are flattened
             and use the fully-qualified field name in the heading, e.g.,

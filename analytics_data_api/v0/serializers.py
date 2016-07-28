@@ -334,11 +334,21 @@ class LastUpdatedSerializer(serializers.Serializer):
 
 
 class LearnerSerializer(serializers.Serializer, DefaultIfNoneMixin):
+    user_id = serializers.IntegerField(source='user_id')
     username = serializers.CharField(source='username')
     enrollment_mode = serializers.CharField(source='enrollment_mode')
     name = serializers.CharField(source='name')
     account_url = serializers.SerializerMethodField('get_account_url')
     email = serializers.CharField(source='email')
+    language = serializers.CharField(source='language')
+    location = serializers.CharField(source='location')
+    year_of_birth = serializers.IntegerField(source='year_of_birth')
+    level_of_education = serializers.CharField(source='level_of_education')
+    gender = serializers.CharField(source='gender')
+    mailing_address = serializers.CharField(source='mailing_address')
+    city = serializers.CharField(source='city')
+    country = serializers.CharField(source='country')
+    goals = serializers.CharField(source='goals')
     segments = serializers.Field(source='segments')
     engagements = serializers.SerializerMethodField('get_engagements')
     enrollment_date = serializers.DateField(source='enrollment_date', format=settings.DATE_FORMAT)
