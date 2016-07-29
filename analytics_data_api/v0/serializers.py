@@ -390,22 +390,22 @@ class ElasticsearchDSLSearchSerializer(EdxPaginationSerializer):
 
 class EngagementDaySerializer(DefaultIfNoneMixin, serializers.Serializer):
     date = serializers.DateField(format=settings.DATE_FORMAT)
-    problems_attempted = serializers.IntegerField(default=0)
-    problems_completed = serializers.IntegerField(default=0)
-    discussion_contributions = serializers.IntegerField(default=0)
-    videos_viewed = serializers.IntegerField(default=0)
+    problems_attempted = serializers.SerializerMethodField()
+    problems_completed = serializers.SerializerMethodField()
+    discussion_contributions = serializers.SerializerMethodField()
+    videos_viewed = serializers.SerializerMethodField()
 
-    def transform_problems_attempted(self, _obj, value):
-        return self.default_if_none(value, 0)
+    def get_problems_attempted(self, obj):
+        return obj.get('problems_attempted', 0)
 
-    def transform_problems_completed(self, _obj, value):
-        return self.default_if_none(value, 0)
+    def get_problems_completed(self, obj):
+        return obj.get('problems_completed', 0)
 
-    def transform_discussion_contributions(self, _obj, value):
-        return self.default_if_none(value, 0)
+    def get_discussion_contributions(self, obj):
+        return obj.get('discussion_contributions', 0)
 
-    def transform_videos_viewed(self, _obj, value):
-        return self.default_if_none(value, 0)
+    def get_videos_viewed(self, obj):
+        return obj.get('videos_viewed', 0)
 
 
 class DateRangeSerializer(serializers.Serializer):

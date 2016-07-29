@@ -460,7 +460,7 @@ class ModuleEngagement(models.Model):
 
     course_id = models.CharField(db_index=True, max_length=255)
     username = models.CharField(max_length=255)
-    date = models.DateTimeField()
+    date = models.DateField()
     # This will be one of "problem", "video" or "discussion"
     entity_type = models.CharField(max_length=255)
     # For problems this will be the usage key, for videos it will be the html encoded module ID,
