@@ -259,10 +259,22 @@ class CourseEnrollmentByCountrySerializer(BaseCourseEnrollmentModelSerializer):
 
 class CourseEnrollmentByGenderSerializer(BaseCourseEnrollmentModelSerializer):
 
-    female = serializers.IntegerField(default=0)
-    male = serializers.IntegerField(default=0)
-    other = serializers.IntegerField(default=0)
-    unknown = serializers.IntegerField(default=0)
+    female = serializers.ReadOnlyField()
+    male = serializers.ReadOnlyField()
+    other = serializers.ReadOnlyField()
+    unknown = serializers.ReadOnlyField()
+
+    def get_female(self, obj):
+        return obj.get('female', None)
+
+    def get_male(self, obj):
+        return obj.get('male', None)
+
+    def get_other(self, obj):
+        return obj.get('other', None)
+
+    def get_unknown(self, obj):
+        return obj.get('unknown', None)
 
     class Meta(object):
         model = models.CourseEnrollmentByGender
@@ -336,13 +348,11 @@ class LearnerSerializer(serializers.Serializer, DefaultIfNoneMixin):
     enrollment_date = serializers.DateField(format=settings.DATE_FORMAT)
     cohort = serializers.CharField()
 
-    def transform_segments(self, _obj, value):
-        # returns null instead of empty strings
-        return value or []
+    def get_segments(self, obj):
+        return obj.get('segments', [])
 
-    def transform_cohort(self, _obj, value):
-        # returns null instead of empty strings
-        return value or None
+    def get_cohort(self, obj):
+        return obj.get('cohort', None)
 
     def get_account_url(self, obj):
         if settings.LMS_USER_ACCOUNT_BASE_URL:
