@@ -194,7 +194,7 @@ class LearnerListView(LastUpdateMixin, CourseViewMixin, generics.ListAPIView):
 
     def _validate_query_params(self):
         """Validates various querystring parameters."""
-        query_params = self.request.QUERY_PARAMS
+        query_params = self.request.query_params
         page = query_params.get('page')
         if page:
             try:
@@ -232,7 +232,7 @@ class LearnerListView(LastUpdateMixin, CourseViewMixin, generics.ListAPIView):
         as a an array of dicts with fields "learner" and "last_updated".
         """
         self._validate_query_params()
-        query_params = self.request.QUERY_PARAMS
+        query_params = self.request.query_params
 
         order_by = query_params.get('order_by')
         sort_order = query_params.get('sort_order')

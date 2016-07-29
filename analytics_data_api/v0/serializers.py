@@ -23,7 +23,7 @@ class CourseActivityByWeekSerializer(serializers.ModelSerializer):
     particular record is likely to change unexpectedly so we avoid exposing it.
     """
 
-    activity_type = serializers.SerializerMethodField('get_activity_type')
+    activity_type = serializers.SerializerMethodField()
 
     def get_activity_type(self, obj):
         """
@@ -207,27 +207,29 @@ class CourseEnrollmentDailySerializer(BaseCourseEnrollmentModelSerializer):
 
 class CourseEnrollmentModeDailySerializer(BaseCourseEnrollmentModelSerializer):
     """ Representation of course enrollment, broken down by mode, for a single day and course. """
+    audit = serializers.SerializerMethodField()
+    credit = serializers.SerializerMethodField()
+    honor = serializers.SerializerMethodField()
+    professional = serializers.SerializerMethodField()
+    verified = serializers.SerializerMethodField()
 
-    def get_default_fields(self):
-        # pylint: disable=super-on-old-class
-        fields = super(CourseEnrollmentModeDailySerializer, self).get_default_fields()
+    def get_audit(self, obj):
+        return obj.get('audit', 0)
 
-        # Create a field for each enrollment mode
-        for mode in ENROLLMENT_MODES:
-            fields[mode] = serializers.IntegerField(required=True, default=0)
+    def get_honor(self, obj):
+        return obj.get('honor', 0)
 
-            # Create a transform method for each field
-            setattr(self, 'transform_%s' % mode, self._transform_mode)
+    def get_credit(self, obj):
+        return obj.get('credit', 0)
 
-        fields['cumulative_count'] = serializers.IntegerField(required=True, default=0)
+    def get_professional(self, obj):
+        return obj.get('professional', 0)
 
-        return fields
-
-    def _transform_mode(self, _obj, value):
-        return self.default_if_none(value, 0)
+    def get_verified(self, obj):
+        return obj.get('verified', 0)
 
     class Meta(object):
-        model = models.CourseEnrollmentDaily
+        model = models.CourseEnrollmentModeDaily
 
         # Declare the dynamically-created fields here as well so that they will be picked up by Swagger.
         fields = ['course_id', 'date', 'count', 'cumulative_count', 'created'] + ENROLLMENT_MODES
@@ -256,21 +258,11 @@ class CourseEnrollmentByCountrySerializer(BaseCourseEnrollmentModelSerializer):
 
 
 class CourseEnrollmentByGenderSerializer(BaseCourseEnrollmentModelSerializer):
-    def get_default_fields(self):
-        # pylint: disable=super-on-old-class
-        fields = super(CourseEnrollmentByGenderSerializer, self).get_default_fields()
 
-        # Create a field for each gender
-        for gender in genders.ALL:
-            fields[gender] = serializers.IntegerField(required=True, default=0)
-
-            # Create a transform method for each field
-            setattr(self, 'transform_%s' % gender, self._transform_gender)
-
-        return fields
-
-    def _transform_gender(self, _obj, value):
-        return self.default_if_none(value, 0)
+    female = serializers.IntegerField(default=0)
+    male = serializers.IntegerField(default=0)
+    other = serializers.IntegerField(default=0)
+    unknown = serializers.IntegerField(default=0)
 
     class Meta(object):
         model = models.CourseEnrollmentByGender
@@ -334,15 +326,15 @@ class LastUpdatedSerializer(serializers.Serializer):
 
 
 class LearnerSerializer(serializers.Serializer, DefaultIfNoneMixin):
-    username = serializers.CharField(source='username')
-    enrollment_mode = serializers.CharField(source='enrollment_mode')
-    name = serializers.CharField(source='name')
-    account_url = serializers.SerializerMethodField('get_account_url')
-    email = serializers.CharField(source='email')
-    segments = serializers.Field(source='segments')
-    engagements = serializers.SerializerMethodField('get_engagements')
-    enrollment_date = serializers.DateField(source='enrollment_date', format=settings.DATE_FORMAT)
-    cohort = serializers.CharField(source='cohort')
+    username = serializers.CharField()
+    enrollment_mode = serializers.CharField()
+    name = serializers.CharField()
+    account_url = serializers.SerializerMethodField()
+    email = serializers.CharField()
+    segments = serializers.ReadOnlyField()
+    engagements = serializers.SerializerMethodField()
+    enrollment_date = serializers.DateField(format=settings.DATE_FORMAT)
+    cohort = serializers.CharField()
 
     def transform_segments(self, _obj, value):
         # returns null instead of empty strings
@@ -376,12 +368,11 @@ class LearnerSerializer(serializers.Serializer, DefaultIfNoneMixin):
         return engagements
 
 
-class EdxPaginationSerializer(pagination.PaginationSerializer):
+class EdxPaginationSerializer(pagination.PageNumberPagination):
     """
     Adds values to the response according to edX REST API Conventions.
     """
-    count = serializers.Field(source='paginator.count')
-    num_pages = serializers.Field(source='paginator.num_pages')
+    num_pages = serializers.ReadOnlyField(source='paginator.num_pages')
 
 
 class ElasticsearchDSLSearchSerializer(EdxPaginationSerializer):
@@ -399,10 +390,10 @@ class ElasticsearchDSLSearchSerializer(EdxPaginationSerializer):
 
 class EngagementDaySerializer(DefaultIfNoneMixin, serializers.Serializer):
     date = serializers.DateField(format=settings.DATE_FORMAT)
-    problems_attempted = serializers.IntegerField(required=True, default=0)
-    problems_completed = serializers.IntegerField(required=True, default=0)
-    discussion_contributions = serializers.IntegerField(required=True, default=0)
-    videos_viewed = serializers.IntegerField(required=True, default=0)
+    problems_attempted = serializers.IntegerField(default=0)
+    problems_completed = serializers.IntegerField(default=0)
+    discussion_contributions = serializers.IntegerField(default=0)
+    videos_viewed = serializers.IntegerField(default=0)
 
     def transform_problems_attempted(self, _obj, value):
         return self.default_if_none(value, 0)
@@ -447,10 +438,10 @@ class EnagementRangeMetricSerializer(serializers.Serializer):
 
 
 class CourseLearnerMetadataSerializer(serializers.Serializer):
-    enrollment_modes = serializers.Field(source='es_data.enrollment_modes')
-    segments = serializers.Field(source='es_data.segments')
-    cohorts = serializers.Field(source='es_data.cohorts')
-    engagement_ranges = serializers.SerializerMethodField('get_engagement_ranges')
+    enrollment_modes = serializers.ReadOnlyField(source='es_data.enrollment_modes')
+    segments = serializers.ReadOnlyField(source='es_data.segments')
+    cohorts = serializers.ReadOnlyField(source='es_data.cohorts')
+    engagement_ranges = serializers.SerializerMethodField()
 
     def get_engagement_ranges(self, obj):
         query_set = obj['engagement_ranges']
