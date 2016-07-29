@@ -636,6 +636,7 @@ class ProblemsListView(BaseCourseView):
     serializer_class = serializers.ProblemSerializer
     allow_empty = False
 
+    @raise_404_if_none
     def get_queryset(self):
         # last_response_count is the number of submissions for the problem part and must
         # be divided by the number of problem parts to get the problem submission rather
