@@ -5,7 +5,6 @@ from rest_framework import pagination, serializers
 from analytics_data_api.constants import (
     engagement_events,
     enrollment_modes,
-    genders,
 )
 from analytics_data_api.v0 import models
 
@@ -187,13 +186,7 @@ class SequentialOpenDistributionSerializer(ModelSerializerWithCreatedField):
         )
 
 
-class DefaultIfNoneMixin(object):
-
-    def default_if_none(self, value, default=0):
-        return value if value is not None else default
-
-
-class BaseCourseEnrollmentModelSerializer(DefaultIfNoneMixin, ModelSerializerWithCreatedField):
+class BaseCourseEnrollmentModelSerializer(ModelSerializerWithCreatedField):
     date = serializers.DateField(format=settings.DATE_FORMAT)
 
 
@@ -334,10 +327,10 @@ class VideoTimelineSerializer(ModelSerializerWithCreatedField):
 
 
 class LastUpdatedSerializer(serializers.Serializer):
-    last_updated = serializers.DateField(source='date', format=settings.DATE_FORMAT)
+    last_updated = serializers.DateTimeField(source='date', format=settings.DATE_FORMAT)
 
 
-class LearnerSerializer(serializers.Serializer, DefaultIfNoneMixin):
+class LearnerSerializer(serializers.Serializer):
     username = serializers.CharField()
     enrollment_mode = serializers.CharField()
     name = serializers.CharField()
@@ -345,7 +338,7 @@ class LearnerSerializer(serializers.Serializer, DefaultIfNoneMixin):
     email = serializers.CharField()
     segments = serializers.ReadOnlyField()
     engagements = serializers.SerializerMethodField()
-    enrollment_date = serializers.DateField(format=settings.DATE_FORMAT)
+    enrollment_date = serializers.DateTimeField(format=settings.DATE_FORMAT)
     cohort = serializers.CharField()
 
     def get_segments(self, obj):
@@ -359,6 +352,9 @@ class LearnerSerializer(serializers.Serializer, DefaultIfNoneMixin):
             return urljoin(settings.LMS_USER_ACCOUNT_BASE_URL, obj.username)
         else:
             return None
+
+    def default_if_none(self, value, default=0):
+        return value if value is not None else default
 
     def get_engagements(self, obj):
         """
@@ -398,7 +394,7 @@ class ElasticsearchDSLSearchSerializer(EdxPaginationSerializer):
         super(ElasticsearchDSLSearchSerializer, self).__init__(*args, **kwargs)
 
 
-class EngagementDaySerializer(DefaultIfNoneMixin, serializers.Serializer):
+class EngagementDaySerializer(serializers.Serializer):
     date = serializers.DateField(format=settings.DATE_FORMAT)
     problems_attempted = serializers.SerializerMethodField()
     problems_completed = serializers.SerializerMethodField()

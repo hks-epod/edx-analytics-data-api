@@ -713,6 +713,7 @@ class ProblemsAndTagsListView(BaseCourseView):
     allow_empty = False
     model = models.ProblemsAndTags
 
+    @raise_404_if_none
     def get_queryset(self):
         queryset = self.model.objects.filter(course_id=self.course_id)
         items = queryset.all()
