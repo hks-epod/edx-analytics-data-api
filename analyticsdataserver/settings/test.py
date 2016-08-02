@@ -38,5 +38,5 @@ AWS_STORAGE_BUCKET_NAME = 'fake-bucket'
 FTP_STORAGE_LOCATION = 'ftp://localhost:80/path'
 
 # Default settings for report download endpoint
-COURSE_REPORT_FILE_LOCATION_TEMPLATE = '{course_id}/{report_name}.csv'
-COURSE_REPORT_DOWNLOAD_EXPIRY_TIME = 86400
+COURSE_REPORT_FILE_LOCATION_TEMPLATE = '/{course_id}_{report_name}.csv'
+COURSE_REPORT_DOWNLOAD_EXPIRY_TIME = 120

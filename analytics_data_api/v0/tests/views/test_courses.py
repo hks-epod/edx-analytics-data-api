@@ -789,7 +789,7 @@ class CourseReportDownloadViewTests(DemoCourseMixin, TestCaseWithAuthentication)
         self.assertEqual(response.status_code, 404)
 
     @patch('analytics_data_api.utils.default_storage', object())
-    def test_storage_provider_other_than_s3(self):
+    def test_incompatible_storage_provider(self):
         response = self.authenticated_get(
             self.path.format(
                 course_id=DEMO_COURSE_ID,
@@ -821,8 +821,8 @@ class CourseReportDownloadViewTests(DemoCourseMixin, TestCaseWithAuthentication)
             'course_id': SANITIZED_DEMO_COURSE_ID,
             'report_name': 'problem_response',
             'download_url': 'http://fake',
-            'last_modified': '2014-01-01T00:00:00Z',
-            'expiration_date': datetime.datetime(2014, 1, 1, tzinfo=pytz.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+            'last_modified': datetime.datetime(2014, 1, 1, tzinfo=pytz.utc).strftime(settings.DATETIME_FORMAT),
+            'expiration_date': datetime.datetime(2014, 1, 1, tzinfo=pytz.utc).strftime(settings.DATETIME_FORMAT),
             'file_size': 1000
         }
         self.assertEqual(response.data, expected)
@@ -850,8 +850,8 @@ class CourseReportDownloadViewTests(DemoCourseMixin, TestCaseWithAuthentication)
             'course_id': SANITIZED_DEMO_COURSE_ID,
             'report_name': 'problem_response',
             'download_url': 'http://fake',
-            'last_modified': '2014-01-01T00:00:00Z',
-            'expiration_date': datetime.datetime(2014, 1, 1, tzinfo=pytz.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+            'last_modified': datetime.datetime(2014, 1, 1, tzinfo=pytz.utc).strftime(settings.DATETIME_FORMAT),
+            'expiration_date': datetime.datetime(2014, 1, 1, tzinfo=pytz.utc).strftime(settings.DATETIME_FORMAT)
         }
         self.assertEqual(response.data, expected)
 
@@ -876,6 +876,6 @@ class CourseReportDownloadViewTests(DemoCourseMixin, TestCaseWithAuthentication)
             'report_name': 'problem_response',
             'download_url': 'http://fake',
             'file_size': 1000,
-            'expiration_date': datetime.datetime(2014, 1, 1, tzinfo=pytz.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+            'expiration_date': datetime.datetime(2014, 1, 1, tzinfo=pytz.utc).strftime(settings.DATETIME_FORMAT)
         }
         self.assertEqual(response.data, expected)

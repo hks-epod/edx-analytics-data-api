@@ -316,6 +316,12 @@ LMS_USER_ACCOUNT_BASE_URL = None
 DEFAULT_PAGE_SIZE = 25
 MAX_PAGE_SIZE = 100
 
+# storage settings for report downloads
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+MEDIA_ROOT = '/edx/app/analytics_api/analytics_api/static/reports'
+MEDIA_URL = 'http://localhost:8100/static/reports/'
+COURSE_REPORT_FILE_LOCATION_TEMPLATE = '{course_id}_{report_name}.csv'
+
 ########## END ANALYTICS DATA API CONFIGURATION
 
 

@@ -15,8 +15,6 @@ from analytics_data_api.v0.exceptions import (
     CannotCreateReportDownloadLinkError
 )
 
-AWS_S3_FILE_STORAGE_CLASS = 'storages.backends.s3boto.S3BotoStorage'
-
 
 def get_filename_safe_course_id(course_id, replacement_char='_'):
     """
@@ -124,7 +122,7 @@ def get_course_report_download_details(course_id, report_name):
     report_location_template = getattr(
         settings,
         'COURSE_REPORT_FILE_LOCATION_TEMPLATE',
-        '/{course_id}/{report_name}'
+        '{course_id}_{report_name}.csv'
     )
     # Course IDs contain characters that may not be valid in various
     # filesystems; here we remove them before looking for the file or
@@ -176,9 +174,7 @@ def get_course_report_download_details(course_id, report_name):
         'download_url': url
     }
     # These are all optional items that aren't guaranteed. The URL isn't guaranteed
-    # either, but we'll raise an exception earlier if we don't have it. Currently, support
-    # is only present for S3, which has all these data types, but this future-proofs
-    # us for scenarios where we might have a storage provider that doesn't support them.
+    # either, but we'll raise an exception earlier if we don't have it.
     if last_modified is not None:
         details.update({'last_modified': last_modified.strftime(settings.DATETIME_FORMAT)})
     if expiration_date is not None:
@@ -196,8 +192,9 @@ def get_file_object_url(filename, download_filename):
     We need to pass extra details to the URL method, above and beyond just the
     file location, to give us what we need.
 
-    Currently, this method only supports S3 storage, and will need to be changed to
-    support building URLs on other storage providers.
+    This method supports S3 storage's optional response parameters that allow
+    us to set expiry time, as well as content disposition and content type
+    on any download made using the generated link.
     """
     # Default to expiring the link after two minutes
     expire_length = getattr(settings, 'COURSE_REPORT_DOWNLOAD_EXPIRY_TIME', 120)
@@ -213,7 +210,16 @@ def get_file_object_url(filename, download_filename):
             },
             expire=expire_length
         )
-    except (AttributeError, TypeError, NotImplementedError):
+    except TypeError:
+        # We got a TypeError when calling `.url()`; typically, this means that the arguments
+        # we passed aren't allowed. Retry with no extra arguments.
+        try:
+            url = default_storage.url(name=filename)
+            expires_at = None
+        except (AttributeError, TypeError, NotImplementedError):
+            # Another error, for unknown reasons. Can't recover from this; fail fast
+            raise CannotCreateReportDownloadLinkError
+    except (AttributeError, NotImplementedError):
         # Either we can't find a .url() method, or we can't use it. Raise an exception.
         raise CannotCreateReportDownloadLinkError
     return url, expires_at
