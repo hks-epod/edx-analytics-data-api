@@ -1,5 +1,5 @@
-boto==2.22.1                        # MIT
 Django==1.8.14 						# BSD License
+boto==2.42.0                        # MIT
 django-model-utils==2.2 			# BSD
 djangorestframework==2.4.4			# BSD
 django-rest-swagger==0.2.8  		# BSD
@@ -13,3 +13,4 @@ ordered-set==2.0.1                  # MIT
 Markdown==2.6    					# BSD
 
 -e git+https://github.com/edx/opaque-keys.git@d45d0bd8d64c69531be69178b9505b5d38806ce0#egg=opaque-keys
+django-storages==1.4.1              # BSD

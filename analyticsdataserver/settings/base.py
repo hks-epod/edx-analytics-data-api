@@ -180,6 +180,8 @@ MIDDLEWARE_CLASSES = (
     'analytics_data_api.v0.middleware.CourseNotSpecifiedErrorMiddleware',
     'analytics_data_api.v0.middleware.CourseKeyMalformedErrorMiddleware',
     'analytics_data_api.v0.middleware.ParameterValueErrorMiddleware',
+    'analytics_data_api.v0.middleware.ReportFileNotFoundErrorMiddleware',
+    'analytics_data_api.v0.middleware.CannotCreateDownloadLinkErrorMiddleware',
 )
 ########## END MIDDLEWARE CONFIGURATION
 
@@ -207,6 +209,7 @@ THIRD_PARTY_APPS = (
     'rest_framework.authtoken',
     'rest_framework_swagger',
     'django_countries',
+    'storages'
 )
 
 LOCAL_APPS = (
