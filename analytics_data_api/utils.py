@@ -16,7 +16,6 @@ from analytics_data_api.v0.exceptions import (
 )
 
 AWS_S3_FILE_STORAGE_CLASS = 'storages.backends.s3boto.S3BotoStorage'
-ISO_8601_FORMAT_STRING = '%Y-%m-%dT%H:%M:%SZ'
 
 
 def get_filename_safe_course_id(course_id, replacement_char='_'):
@@ -181,9 +180,9 @@ def get_course_report_download_details(course_id, report_name):
     # is only present for S3, which has all these data types, but this future-proofs
     # us for scenarios where we might have a storage provider that doesn't support them.
     if last_modified is not None:
-        details.update({'last_modified': last_modified.strftime(ISO_8601_FORMAT_STRING)})
+        details.update({'last_modified': last_modified.strftime(settings.DATETIME_FORMAT)})
     if expiration_date is not None:
-        details.update({'expiration_date': expiration_date.strftime(ISO_8601_FORMAT_STRING)})
+        details.update({'expiration_date': expiration_date.strftime(settings.DATETIME_FORMAT)})
     if download_size is not None:
         details.update({'file_size': download_size})
     return details
