@@ -180,6 +180,8 @@ MIDDLEWARE_CLASSES = (
     'analytics_data_api.v0.middleware.CourseNotSpecifiedErrorMiddleware',
     'analytics_data_api.v0.middleware.CourseKeyMalformedErrorMiddleware',
     'analytics_data_api.v0.middleware.ParameterValueErrorMiddleware',
+    'analytics_data_api.v0.middleware.ReportFileNotFoundErrorMiddleware',
+    'analytics_data_api.v0.middleware.CannotCreateDownloadLinkErrorMiddleware',
 )
 ########## END MIDDLEWARE CONFIGURATION
 
@@ -207,6 +209,7 @@ THIRD_PARTY_APPS = (
     'rest_framework.authtoken',
     'rest_framework_swagger',
     'django_countries',
+    'storages'
 )
 
 LOCAL_APPS = (
@@ -293,7 +296,7 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
-        'rest_framework_csv.renderers.CSVRenderer',
+        'analytics_data_api.renderers.PaginatedCsvRenderer',
     )
 }
 ########## END REST FRAMEWORK CONFIGURATION
@@ -308,6 +311,16 @@ ENABLE_ADMIN_SITE = False
 
 # base url to generate link to user api
 LMS_USER_ACCOUNT_BASE_URL = None
+
+# Warning: using 0 or None for these can alter the structure of the REST response.
+DEFAULT_PAGE_SIZE = 25
+MAX_PAGE_SIZE = 100
+
+# storage settings for report downloads
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+MEDIA_ROOT = '/edx/app/analytics_api/analytics_api/static/reports'
+MEDIA_URL = 'http://localhost:8100/static/reports/'
+COURSE_REPORT_FILE_LOCATION_TEMPLATE = '{course_id}_{report_name}.csv'
 
 ########## END ANALYTICS DATA API CONFIGURATION
 
