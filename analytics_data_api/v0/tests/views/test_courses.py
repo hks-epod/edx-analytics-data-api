@@ -16,7 +16,9 @@ from analytics_data_api.constants.country import get_country
 from analytics_data_api.v0 import models
 from analytics_data_api.constants import country, enrollment_modes, genders
 from analytics_data_api.v0.models import CourseActivityWeekly
-from analytics_data_api.v0.tests.views import DemoCourseMixin, VerifyCsvResponseMixin, DEMO_COURSE_ID, SANITIZED_DEMO_COURSE_ID
+from analytics_data_api.v0.tests.views import (
+    DemoCourseMixin, VerifyCsvResponseMixin, DEMO_COURSE_ID, SANITIZED_DEMO_COURSE_ID
+)
 from analyticsdataserver.tests import TestCaseWithAuthentication
 
 

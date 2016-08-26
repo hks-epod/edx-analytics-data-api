@@ -203,7 +203,7 @@ class LearnerListView(LastUpdateMixin, CourseViewMixin, PaginatedHeadersMixin, C
             and the order they appear in.
 
             Fields containing "list" values, like 'segments', are flattened and
-            returned in order, e.g., multiple segments values would be represented 
+            returned in order, e.g., multiple segments values would be represented
             as "struggling, highly engaged"
 
             Fields containing "dict" values, like 'engagements', are flattened
